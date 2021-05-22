@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Emdr_App"
+             xmlns:sfbuttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             x:Class="Emdr_App.ColorPicker">
+
+    <ContentView.Resources>
+        <local:ColorToChipConverter x:Key="ColorsToChips"/>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <sfbuttons:SfChipGroup  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                                Type="Choice" ChipBorderWidth="1"
+				                ItemsSource="{Binding Colors, Converter={StaticResource ColorsToChips}}">
+            <sfbuttons:SfChipGroup.ChipLayout>
+                <FlexLayout 
+						HorizontalOptions="Start" 
+						VerticalOptions="Center" 
+						Direction="Row" 
+						Wrap="Wrap"
+                        BackgroundColor="{Binding SelectedColor, Mode=TwoWay}"
+						JustifyContent="Start"
+						AlignContent="Start" 
+						AlignItems="Start"/>
+            </sfbuttons:SfChipGroup.ChipLayout>
+        </sfbuttons:SfChipGroup>
+    </ContentView.Content>
+</ContentView>

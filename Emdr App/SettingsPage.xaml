@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Emdr_App"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:sfbuttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
+             x:Class="Emdr_App.SettingsPage">
+    <ContentPage.Resources>
+        <local:ColorToChipConverter x:Key="ColorsToChips"/>
+    </ContentPage.Resources>
+    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Black">
+        <Frame x:Name="optionsFrame" BorderColor="Blue"  BackgroundColor="#2196F3" CornerRadius="5" VerticalOptions="Fill">
+            <ScrollView VerticalOptions="FillAndExpand" HeightRequest="175">
+                <Grid Padding="5,5,5,5" ColumnSpacing="10" VerticalOptions="Start" HeightRequest="270">
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="45"/>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="150"/>
+
+                    </Grid.RowDefinitions>
+
+                    <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+                        <Label x:Name="infoLabel" FontAttributes="Bold" TextColor="DarkRed" Text="Press Preview to see adjustable settings. Then tap the screen for settings to dissapear/reappear."/>
+                        <Button x:Name="previewButton" HeightRequest="20"  Text="Preview" Clicked="previewButton_Clicked"/>
+                    </StackLayout>
+
+                    <StackLayout Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
+                        <StackLayout x:Name="targetPlatformPanel" >
+                            <Label FontAttributes="Bold" Text="Target Platform:"/>
+                            <RadioButton  x:Name="thisDeviceButton" Content="PC/Android" CheckedChanged="RadioButton_CheckedChanged" GroupName="targetPlatform" >
+
+                            </RadioButton>
+                            <RadioButton x:Name="arduinoButton"  Content="Arduino" CheckedChanged="RadioButton_CheckedChanged" GroupName="targetPlatform" >
+
+                            </RadioButton>
+                        </StackLayout>
+                        <StackLayout x:Name="arduinoSettingsPanel">
+
+                            <Label x:Name="arduinoNameTitle" Text="Arduino Name"/>
+                            <Entry x:Name="arduinoNameEntry" Text="EMDRArduino" BackgroundColor="White"></Entry>
+
+                            <StackLayout x:Name="toFromLEDsPanel" Orientation="Horizontal">
+
+                                <Label Text="LEDs: "/>
+                                <Label x:Name="arduinoLEDFromTitle" Text="From "/>
+                                <Entry x:Name="arduinoLEDFromEntry" Keyboard="Numeric" Text="1" AutomationProperties.LabeledBy="arduinoLEDFromTitle" PropertyChanged="arduinoLEDFromEntry_PropertyChanged" BackgroundColor="White"></Entry>
+                                <Label x:Name="arduinoLEDToTitle" Text="To "/>
+                                <Entry x:Name="arduinoLEDToEntry" Keyboard="Numeric" Text="100" AutomationProperties.LabeledBy="arduinoLEDFromTitle" PropertyChanged="arduinoLEDToEntry_PropertyChanged" BackgroundColor="White"></Entry>
+
+                            </StackLayout>
+
+                        </StackLayout>
+                    </StackLayout>
+
+
+                    <StackLayout x:Name="typesOfStimulationPanel" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+
+                        <StackLayout Orientation="Horizontal">
+                            <CheckBox x:Name="lightCheckBox" CheckedChanged="CheckBox_CheckedChanged">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Black" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+
+                                        <VisualState x:Name="IsChecked">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Green" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </CheckBox>
+                            <Label Text="Light"/>
+                        </StackLayout>
+
+                        <StackLayout Orientation="Horizontal">
+                            <CheckBox x:Name="soundCheckBox"  CheckedChanged="CheckBox_CheckedChanged">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Black" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+
+                                        <VisualState x:Name="IsChecked">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Green" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </CheckBox>
+                            <Label Text="Sound"/>
+                        </StackLayout>
+
+                        <StackLayout Orientation="Horizontal">
+                            <CheckBox x:Name="tappersSmallCheckBox"  CheckedChanged="CheckBox_CheckedChanged">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Black" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+
+                                        <VisualState x:Name="IsChecked">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Green" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </CheckBox>
+                            <Label Text="Small Tappers"/>
+                        </StackLayout>
+
+                        <StackLayout Orientation="Horizontal">
+                            <CheckBox x:Name="tappersLargeCheckBox"  CheckedChanged="CheckBox_CheckedChanged">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Black" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+
+                                        <VisualState x:Name="IsChecked">
+                                            <VisualState.Setters>
+                                                <Setter Property="Color"
+                            Value="Green" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </CheckBox>
+                            <Label Text="Large Tappers"/>
+                        </StackLayout>
+
+                    </StackLayout>
+                </Grid>
+        
+        </ScrollView>
+        </Frame>
+    </StackLayout>
+</ContentPage>

@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Emdr_App"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:sfbuttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:border="clr-namespace:Syncfusion.XForms.Border;assembly=Syncfusion.Core.XForms"
+             x:Class="Emdr_App.MainPage">
+    <ContentPage.Resources>
+        <local:ColorToChipConverter x:Key="ColorsToChips"/>
+    </ContentPage.Resources>
+    <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Black">
+        <Frame x:Name="optionsFrame" BorderColor="Blue"  BackgroundColor="#2196F3" CornerRadius="5" VerticalOptions="Fill">
+            <ScrollView VerticalOptions="FillAndExpand" HeightRequest="250">
+                <StackLayout Orientation="Vertical">
+                    <Grid x:Name="initGrid" Padding="5,5,5,5" ColumnSpacing="10" VerticalOptions="Start" HeightRequest="270">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="5*"/>
+
+                        </Grid.RowDefinitions>
+
+                        <StackLayout Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4">
+                            <Label x:Name="infoLabel" FontAttributes="Bold" TextColor="DarkRed" Text="Select what device and type of stimulation. Click Preview."/>
+                        </StackLayout>
+
+                        <StackLayout Grid.Row="1" Grid.Column="0" x:Name="targetPlatformPanel" >
+                            <Label FontAttributes="Bold" Text="Target Platform:"/>
+                            <RadioButton  x:Name="thisDeviceButton" Content="PC/Android" CheckedChanged="RadioButton_CheckedChanged" GroupName="targetPlatform" />
+                            <RadioButton x:Name="arduinoButton"  Content="Arduino" CheckedChanged="RadioButton_CheckedChanged" GroupName="targetPlatform" />
+                        </StackLayout>
+                        <StackLayout  Grid.Row="1" Grid.Column="1" x:Name="BLEPanel" IsVisible="False">
+
+                            <Label x:Name="arduinoNameTitle" FontAttributes="Bold" Text="Arduino IP Address"/>
+                            <Entry x:Name="arduinoIPAddressEntry" Keyboard="Numeric" Text="192.168.1.128"  BackgroundColor="White"></Entry>
+
+                        </StackLayout>
+                        <StackLayout x:Name="typesOfStimulationPanel" Grid.Row="1" Grid.Column="2">
+
+                            <StackLayout Orientation="Horizontal">
+                                <CheckBox x:Name="lightCheckBox" IsChecked="True" CheckedChanged="lightCheckBox_CheckedChanged">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Color"
+                            Value="Black" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+
+                                            <VisualState x:Name="IsChecked">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Color"
+                            Value="Green" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </CheckBox>
+                                <Label Text="Light"/>
+                            </StackLayout>
+
+                            <StackLayout Orientation="Horizontal">
+                                <CheckBox x:Name="soundCheckBox" IsChecked="True" CheckedChanged="soundCheckBox_CheckedChanged">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Color"
+                            Value="Black" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+
+                                            <VisualState x:Name="IsChecked">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Color"
+                            Value="Green" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </CheckBox>
+                                <Label Text="Sound"/>
+                            </StackLayout>
+
+                            <StackLayout x:Name="tappersPanel">
+                                <StackLayout Orientation="Horizontal">
+                                    <CheckBox x:Name="tappersSmallCheckBox" CheckedChanged="tappersSmallCheckBox_CheckedChanged">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Color"
+                            Value="Black" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="IsChecked">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Color"
+                            Value="Green" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </CheckBox>
+                                    <Label Text="Small Tappers"/>
+                                </StackLayout>
+
+                                <StackLayout Orientation="Horizontal">
+                                    <CheckBox x:Name="tappersLargeCheckBox" CheckedChanged="tappersLargeCheckBox_CheckedChanged">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Color"
+                            Value="Black" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="IsChecked">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Color"
+                            Value="Green" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </CheckBox>
+                                    <Label Text="Large Tappers"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </StackLayout>
+
+                        <StackLayout  Grid.Row="1" Grid.Column="3" x:Name="previewPanel">
+                            <Button x:Name="previewButton" HeightRequest="40"  Text="Preview" Clicked="previewButton_Clicked"/>
+                        </StackLayout>
+                    </Grid>
+
+                    <Grid x:Name="previewGrid" Padding="5,5,5,5" ColumnSpacing="10" VerticalOptions="Start" IsVisible="False" HeightRequest="270">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackLayout Grid.Row="0" Grid.Column="0" Orientation="Vertical">
+                            <StackLayout x:Name="arduinoSettingsPanel" Orientation="Vertical">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="LEDs: "/>
+                                    <Label x:Name="arduinoLEDFromTitle" Text="From "/>
+                                    <Entry x:Name="arduinoLEDFromEntry" Keyboard="Numeric" Text="181" AutomationProperties.LabeledBy="arduinoLEDFromTitle" PropertyChanged="arduinoLEDFromEntry_PropertyChanged" BackgroundColor="White"></Entry>
+                                    <Label x:Name="arduinoLEDToTitle" Text="To "/>
+                                    <Entry x:Name="arduinoLEDToEntry" Keyboard="Numeric" Text="260" AutomationProperties.LabeledBy="arduinoLEDFromTitle" PropertyChanged="arduinoLEDToEntry_PropertyChanged" BackgroundColor="White"></Entry>
+                                </StackLayout>
+                                <Button x:Name="setLEDRange" HeightRequest="40" WidthRequest="100" Text="Set LEDs Range" Clicked="setLEDRange_Clicked"/>
+                                <StackLayout x:Name="brightnessPanel">
+
+                                    <Label x:Name="brightnessTitle" Text="Brightness"/>
+                                    <Slider x:Name="brightnessSlider" ValueChanged="brightnessSlider_ValueChanged" Maximum="99" Value="45" Minimum="10"  BackgroundColor="DarkBlue"></Slider>
+
+                                </StackLayout>
+                            </StackLayout>
+
+
+                            <StackLayout x:Name="sizePanel">
+                                <Label x:Name="sizeTitle" Text="Size"/>
+                                <Slider x:Name="sizeSlider" ValueChanged="sizeSlider_ValueChanged" Value="0.5" Maximum="1"  BackgroundColor="DarkBlue"></Slider>
+                            </StackLayout>
+                        </StackLayout>
+                        
+                        <StackLayout  Grid.Row="0" Grid.Column="1" x:Name="colorPanel" >
+                                <Label x:Name="colorTitle" Text="Color"/>
+                                <border:SfBorder HeightRequest="0"
+                                     WidthRequest="200"
+                                     BackgroundColor="{Binding Source={x:Reference chipscolorpicker}, Path=SelectedColor}"
+                                     CornerRadius="75"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="Center"/>
+                                <ScrollView>
+                                    <local:ColorPicker PropertyChanged="chipscolorpicker_PropertyChanged"  x:Name="chipscolorpicker"/>
+                                </ScrollView>
+                            </StackLayout>
+
+                            <StackLayout Grid.Row="0" Grid.Column="2" x:Name="speedPanel">
+                                <Label x:Name="speedTitle" Text="Speed"/>
+                                <Slider x:Name="speedSlider" Maximum="30" Minimum="1" Value="10" ValueChanged="speedSlider_ValueChanged"  BackgroundColor="DarkBlue"></Slider>
+                                <Button x:Name="backButton" HeightRequest="40"  Text="Back" Clicked="backButton_Clicked"/>
+                            </StackLayout>
+                            
+
+                    </Grid>
+                </StackLayout>
+            </ScrollView>
+        </Frame>
+        <skia:SKCanvasView x:Name="canvasView" PropertyChanged="canvasView_PropertyChanged" BackgroundColor="black" EnableTouchEvents="True" Touch="canvasView_Touch" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" PaintSurface="canvasView_PaintSurface">
+
+        </skia:SKCanvasView>
+
+    </StackLayout>
+
+</ContentPage>

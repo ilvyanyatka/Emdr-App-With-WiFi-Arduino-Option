@@ -1,0 +1,2 @@
+#define SECRET_SSID "chaubino"
+#define SECRET_PASS "WHOISTHEFINALBOSS"
