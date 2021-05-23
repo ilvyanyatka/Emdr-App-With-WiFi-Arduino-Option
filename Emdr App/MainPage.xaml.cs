@@ -76,7 +76,9 @@ namespace Emdr_App
         {
             InitializeComponent();
 
-             if (emdrModel.Platform == TargetPlatform.Software)
+            ArduinoHTTPUtils.IP = arduinoIPAddressEntry.Text;
+
+            if (emdrModel.Platform == TargetPlatform.Software)
                 thisDeviceButton.IsChecked = true;
             else
                 arduinoButton.IsChecked = true;
@@ -147,9 +149,6 @@ namespace Emdr_App
                 TimeSpan time = currentEmdrStepStarted.Subtract(lastEmdrStepStarted);
                 emdrStepRealInterval = (int)Math.Round(time.TotalMilliseconds);
                 lastEmdrStepStarted = currentEmdrStepStarted;
-#if DEBUG
-                Debug.WriteLine(String.Format("real time {0}", emdrStepRealInterval));
-#endif
                 // area between ball touching both sides of canvas view / stepInterval * speed/10 (because we keep speed times 10 to be int and the same for arduino and PC)
                 int steps = (int)Math.Round((canvasView.Width - 2 * emdrModel.Size) / emdrStepInterval * ((double)emdrModel.Speed / 10));
                 
@@ -427,7 +426,7 @@ namespace Emdr_App
         {
             // send data to Arduino
             if (emdrModel.Platform == TargetPlatform.Arduino)
-                ArduinoHTTPUtils.SendStart(emdrModel, this.arduinoLEDToEntry.Text, this.arduinoLEDFromEntry.Text);
+                ArduinoHTTPUtils.SendStart(emdrModel, this.arduinoLEDFromEntry.Text, this.arduinoLEDToEntry.Text);
 
         }
 
@@ -449,6 +448,11 @@ namespace Emdr_App
         private void tappersLargeCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
             emdrModel.UseLargeTappers = tappersLargeCheckBox.IsChecked;
+        }
+
+        private void arduinoIPAddressEntry_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            ArduinoHTTPUtils.IP = arduinoIPAddressEntry.Text;
         }
     }
 }

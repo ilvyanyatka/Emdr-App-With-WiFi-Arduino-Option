@@ -1,6 +1,6 @@
 //#define DEBUG
-#define DEBUGC
-
+//#define DEBUGC
+#define DEBUGG
 // for led
 #include <FastLED.h>
 
@@ -60,11 +60,11 @@ int light=1;
 int motor1=1;
 int motor2=1;
 int sound=1;
-int speed = 2; // how many circles will be in 10 seconds
+int speed = 20; // how many circles will be in 10 seconds
 
 // this is all led related
-int from_led=181; // forst led in range
-int to_led=260; // last led in range
+int from_led=141; // forst led in range
+int to_led=220; // last led in range
 int r=0; // red value for light
 int g=255; // green value for light
 int b=0; // blue value for light
@@ -84,7 +84,7 @@ bool prev_processRightSide = false;
 bool processRightSide = false;
 
 String oldRequestValue = "";
-String newRequestValue = "";
+String newRequestValue = "GET /start?light=1&soind=-1&motor1=-1&red=128&green=0&blue=0";
 String oldCommandValue = "";
 String newCommandValue = "start";
 String oldStartCommandValue = "";
@@ -112,6 +112,11 @@ void setup()
  pinMode(MOTOR1_RIGHT_PIN, OUTPUT);
  pinMode(MOTOR2_LEFT_PIN, OUTPUT);
  pinMode(MOTOR2_LEFT_PIN, OUTPUT);
+ // for this relay HIGH mean open circuit, LOW mean closed
+ digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+ digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+ digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+ digitalWrite(MOTOR2_LEFT_PIN, HIGH);
 }
 
 void loop()
@@ -124,7 +129,13 @@ void loop()
     delay(STEP_INTERVAL);
     return;
   }
-  
+
+  // for this relay HIGH mean open circuit, LOW mean closed
+   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+   
 #ifdef DEBUG
     Serial.println("loop started");
 #endif 
@@ -138,73 +149,76 @@ void loop()
   if(millis() - last_params_update_step_time > BLE_UPDATE_STEP_INTERVAL)
   {
 
-
+  last_params_update_step_time = millis();
   ///////////////////////////////////////////
   // get start/stop value from wifi
   ///////////////////////////////////////////
   
-    newRequestValue = GetRequestValue();
+    String tempValue = GetRequestValue();
+    if (tempValue!=""){
+      newRequestValue = tempValue;
+      #ifdef DEBUGG
+          Serial.println("newRequestValue="+ newRequestValue);
+    #endif 
+    }
+     
     ///////////////////////////////////
     // if we got new value - parse it
     
-    if (newRequestValue != oldRequestValue)
+    if (1) //newRequestValue != oldRequestValue)
     {  
       // first see if it is start/stop command
-      newStartCommandValue = GetStartCommand(newRequestValue);
-  
-      //////////////////////////////////////////
+      tempValue = GetStartCommand(newRequestValue);
+      if (tempValue!=""){
+        newStartCommandValue = tempValue;
+        #ifdef DEBUGG
+          Serial.println("newStartCommandValue="+ newStartCommandValue);
+    #endif
+
+      }
+        //////////////////////////////////////////
       // if we got new start/stop value - parse it
       
-      if (newStartCommandValue != oldStartCommandValue)
+      if (1) //newStartCommandValue != oldStartCommandValue)
       {
         oldStartCommandValue = newStartCommandValue;
          // check command "stop"
         if (newStartCommandValue.startsWith("stop"))
         {
             presetStopCommand();
-            resetMotorsSound();
+            resetMotors();
             resetLEDs();
             return;
         }
         else // we have start command
         {
           // get new command string
-          newCommandValue = GetNewCommand(newRequestValue);
-   
+          tempValue = GetNewCommand(newRequestValue);
+          if(tempValue!=""){
+            newCommandValue = tempValue;
+          }
           if (newCommandValue != oldCommandValue)
           {
             oldCommandValue = newCommandValue;
-            #ifdef DEBUG  
-                  Serial.println("before getparams light="+light);
-                  Serial.println("sound="+sound);
-            #endif
             GetParamsFromCommand(newCommandValue);
-            #ifdef DEBUG  
-                  Serial.println("after getparams light=");
-                  Serial.println(light);
-                  Serial.println("sound=");
-                  Serial.println(sound);
-            #endif
+
           }
-    #ifdef DEBUG  
+    #ifdef DEBUGG
               Serial.println("light="+light);
               Serial.println("sound="+sound);
               Serial.println("motor1="+motor1);
               Serial.println("motor2="+motor2);
-              Serial.println("old_brightness="+old_brightness);
-              Serial.println("brightness="+brightness);
+              //Serial.println("old_brightness="+old_brightness);
+              //Serial.println("brightness="+brightness);
               Serial.println("speed="+speed);
-              Serial.println("to_led="+to_led);
-              Serial.println("from_led="+from_led);
-              Serial.println("r="+r);
-              Serial.println("g="+g);
-              Serial.println("b="+b);
+              //Serial.println("to_led="+to_led);
+              //Serial.println("from_led="+from_led);
+              //Serial.println("r="+r);
+              //Serial.println("g="+g);
+              //Serial.println("b="+b);
     #endif
           presetStartCommand();
-          resetMotorsSound();
-    #ifdef DEBUG
-          Serial.println("before Step");
-    #endif
+          //resetMotors();
         }
       }
     }
@@ -213,6 +227,9 @@ void loop()
     
     if (newStartCommandValue.startsWith("start"))
     {
+      #ifdef DEBUG
+          Serial.println("inside Step");
+    #endif
       Step();
     }
   }
@@ -242,14 +259,9 @@ void Step()
     int ledNum = prev_ledNum + led_steps;
 #ifdef DEBUGC
     Serial.println("inside the step");
-    //Serial.println("light=" + light);
-    //Serial.println("sound=" + sound);
     Serial.print("led_steps=");
     Serial.println(led_steps);
-    //Serial.println("prev_ledNum=");
-    //Serial.println(prev_ledNum);
-    //Serial.println("ledNum=");
-    //Serial.println(ledNum);
+
 #endif  
     // if new ledNum reach the border - change direction
     if(ledNum <=from_led)
@@ -263,11 +275,15 @@ void Step()
       ledNum = to_led;
     }
     // for any value of light - on/off - turn off previously highlighted led
-    setLED(prev_ledNum, 0, 0, 0);
-#ifdef DEBUGC
+    if(light > 0)
+    {
+      setLED(prev_ledNum, 0, 0, 0);
+#ifdef DEBUG
     Serial.print(prev_ledNum);
     Serial.println("off ");
-#endif     
+#endif  
+    }
+   
     //resetLEDs();
     prev_ledNum = ledNum;
 #ifdef DEBUG
@@ -281,7 +297,7 @@ void Step()
     {
       // highlight current led
       setLED(ledNum, r, g, b);
-#ifdef DEBUGC
+#ifdef DEBUG
     Serial.print(ledNum);
     Serial.println("on ");
 #endif 
@@ -340,13 +356,13 @@ void Step()
       if(motor1>0)
       {
         // send signal to start left motor1
-        digitalWrite(MOTOR1_LEFT_PIN, HIGH);
+        digitalWrite(MOTOR1_LEFT_PIN, LOW);
         
       }
       if(motor2>0)
       {
         // send signal to start left motor2
-        digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+        digitalWrite(MOTOR2_LEFT_PIN, LOW);
       }
       if(sound>0)
       {
@@ -361,12 +377,12 @@ void Step()
       if(motor1>0)
       {
         // send signal to start right motor1
-        digitalWrite(MOTOR1_RIGHT_PIN, HIGH);
+        digitalWrite(MOTOR1_RIGHT_PIN, LOW);
       }
       if(motor2>0)
       {
         // send signal to start right motor2
-        digitalWrite(MOTOR2_RIGHT_PIN, HIGH);
+        digitalWrite(MOTOR2_RIGHT_PIN, LOW);
       }
       if(sound>0)
       {
@@ -378,10 +394,10 @@ void Step()
     else
     {
       // stop motors
-      digitalWrite(MOTOR1_LEFT_PIN, LOW);
-      digitalWrite(MOTOR1_LEFT_PIN, LOW);
-      digitalWrite(MOTOR1_RIGHT_PIN, LOW);
-      digitalWrite(MOTOR2_RIGHT_PIN, LOW);
+      digitalWrite(MOTOR1_LEFT_PIN, HIGH);
+      digitalWrite(MOTOR1_LEFT_PIN, HIGH);
+      digitalWrite(MOTOR1_RIGHT_PIN, HIGH);
+      digitalWrite(MOTOR2_RIGHT_PIN, HIGH);
       // stop sounds
       noTone(LEFT_SOUND_PIN);
       noTone(RIGHT_SOUND_PIN);
@@ -540,26 +556,21 @@ void presetStopCommand()
       light=-1;
       sound=-1;
       resetLEDs();
+        // stop sounds
+      noTone(LEFT_SOUND_PIN);
+      noTone(RIGHT_SOUND_PIN);
 }
 
 //////////
 // need to be called after "start" and "stop" command. Because value can change
 //////////
-void resetMotorsSound()
+void resetMotors()
 {
-   if(motor1<0)
-    {
-      // send signal to  stop all motor1
-      
-    }
-    if(motor2<0)
-    {
-      // send signal to  stop all motor2
-    }
-    if(sound<0)
-    {
-      // send signal to  stop all sound
-    }
+  // stop motors
+  digitalWrite(MOTOR1_LEFT_PIN, HIGH);
+  digitalWrite(MOTOR1_LEFT_PIN, HIGH);
+  digitalWrite(MOTOR1_RIGHT_PIN, HIGH);
+  digitalWrite(MOTOR2_RIGHT_PIN, HIGH);
 }
 
 void setupServer(){
@@ -614,6 +625,7 @@ void printWifiStatus() {
 //////////////////////////////////////////////
 String GetRequestValue()
 {
+  String result = "";
   String currentLine = "";                // make a String to hold incoming data from the client
   WiFiClient client = server.available();   // listen for incoming clients
 
@@ -625,7 +637,13 @@ String GetRequestValue()
         char c = client.read();             // read a byte, then
         Serial.write(c);                    // print it out the serial monitor
         if (c == '\n') {                    // if the byte is a newline character
-
+          if(currentLine.startsWith("GET")){
+            result = currentLine;
+            #ifdef DEBUGG
+            Serial.println("request:" + result);
+            #endif   
+          }
+          
           // if the current line is blank, you got two newline characters in a row.
           // that's the end of the client HTTP request, so send a response:
           if (currentLine.length() == 0) {
@@ -655,7 +673,7 @@ String GetRequestValue()
     client.stop();
     Serial.println("client disconnected");
   }
-  return currentLine;
+  return result;
 }
 
 ///////////////////////////////////////////
@@ -663,10 +681,10 @@ String GetRequestValue()
 //////////////////////////////////////////
 String GetStartCommand(String requestValue){
   String result = "";
-  if(requestValue.indexOf("start")>=0)
-    result = "start";
-  else
+  if(requestValue.indexOf("stop")>=0)
     result = "stop";
+  else if(requestValue.indexOf("start")>=0)
+    result = "start";
 
   return result;
 }

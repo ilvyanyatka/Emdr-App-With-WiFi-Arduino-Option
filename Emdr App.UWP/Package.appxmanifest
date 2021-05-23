@@ -51,6 +51,8 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="internetClientServer"/>
+    <Capability Name="privateNetworkClientServer"/>
     <DeviceCapability Name="bluetooth"/>
   </Capabilities>
 </Package>

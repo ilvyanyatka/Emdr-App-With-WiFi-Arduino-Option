@@ -39,7 +39,7 @@
                         <StackLayout  Grid.Row="1" Grid.Column="1" x:Name="BLEPanel" IsVisible="False">
 
                             <Label x:Name="arduinoNameTitle" FontAttributes="Bold" Text="Arduino IP Address"/>
-                            <Entry x:Name="arduinoIPAddressEntry" Keyboard="Numeric" Text="192.168.1.128"  BackgroundColor="White"></Entry>
+                            <Entry x:Name="arduinoIPAddressEntry" Keyboard="Numeric" Text="192.168.1.128" PropertyChanged="arduinoIPAddressEntry_PropertyChanged"  BackgroundColor="White"></Entry>
 
                         </StackLayout>
                         <StackLayout x:Name="typesOfStimulationPanel" Grid.Row="1" Grid.Column="2">

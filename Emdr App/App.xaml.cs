@@ -21,13 +21,17 @@ namespace Emdr_App
         protected override void OnStart()
         {
         }
-
+        
         protected override void OnSleep()
         {
         }
 
         protected override void OnResume()
         {
+        }
+        protected override void CleanUp()
+        {
+            ArduinoHTTPUtils.SendStop();
         }
     }
 }
