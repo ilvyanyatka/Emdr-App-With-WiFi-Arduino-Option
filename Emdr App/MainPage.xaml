@@ -191,7 +191,7 @@
 
                             <StackLayout Grid.Row="0" Grid.Column="2" x:Name="speedPanel">
                                 <Label x:Name="speedTitle" Text="Speed"/>
-                                <Slider x:Name="speedSlider" Maximum="30" Minimum="1" Value="10" ValueChanged="speedSlider_ValueChanged"  BackgroundColor="DarkBlue"></Slider>
+                                <Slider x:Name="speedSlider" Maximum="60" Minimum="1" Value="10" ValueChanged="speedSlider_ValueChanged"  BackgroundColor="DarkBlue"></Slider>
                                 <Button x:Name="backButton" HeightRequest="40"  Text="Back" Clicked="backButton_Clicked"/>
                             </StackLayout>
                             

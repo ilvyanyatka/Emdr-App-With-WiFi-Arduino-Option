@@ -93,7 +93,7 @@ namespace Emdr_App
             Device.StartTimer(TimeSpan.FromMilliseconds(emdrStepInterval), EmdrStep);
         }
 
-        
+
         public bool EmdrStep()
         {
             if(lastEmdrStepStarted == DateTime.MinValue)

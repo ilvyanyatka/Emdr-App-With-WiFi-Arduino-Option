@@ -41,6 +41,9 @@ WiFiServer server(80);
 #define MOTOR1_RIGHT_PIN    4
 #define MOTOR2_LEFT_PIN    5
 #define MOTOR2_RIGHT_PIN    6
+#define MOTOR_ON HIGH
+#define MOTOR_OFF LOW
+
 #define LEFT_SOUND_PIN 9
 #define RIGHT_SOUND_PIN 10
 
@@ -57,10 +60,10 @@ CRGB leds[MAX_N_LEDS];
 // control variables
 // these can be 1 or -1, mean on or off
 int light=1;
-int motor1=1;
-int motor2=1;
+int motor1=-1;
+int motor2=-1;
 int sound=1;
-int speed = 20; // how many circles will be in 10 seconds
+int speed = 40; // how many circles will be in 10 seconds
 
 // this is all led related
 int from_led=141; // forst led in range
@@ -84,7 +87,7 @@ bool prev_processRightSide = false;
 bool processRightSide = false;
 
 String oldRequestValue = "";
-String newRequestValue = "GET /start?light=1&soind=-1&motor1=-1&red=128&green=0&blue=0";
+String newRequestValue = "GET /start?light=1&soind=1&motor1=-1&red=128&green=0&blue=0&from=140&to=220";
 String oldCommandValue = "";
 String newCommandValue = "start";
 String oldStartCommandValue = "";
@@ -96,10 +99,21 @@ long last_params_update_step_time = 0;
 
 void setup()
 {
-#ifdef DEBUG  
+//#ifdef DEBUG  
   //Serial.begin(1200);
   Serial.begin(9600);
-#endif  
+//#endif  
+
+// init motors
+ pinMode(MOTOR1_LEFT_PIN, OUTPUT);
+ pinMode(MOTOR1_RIGHT_PIN, OUTPUT);
+ pinMode(MOTOR2_LEFT_PIN, OUTPUT);
+ pinMode(MOTOR2_LEFT_PIN, OUTPUT);
+ // for this relay MOTOR_OFF mean open circuit, MOTOR_ON mean closed
+ digitalWrite(MOTOR1_LEFT_PIN, MOTOR_OFF);
+ digitalWrite(MOTOR1_RIGHT_PIN, MOTOR_OFF);
+ digitalWrite(MOTOR2_LEFT_PIN, MOTOR_OFF);
+ digitalWrite(MOTOR2_RIGHT_PIN, MOTOR_OFF);
 
   // set up server
   setupServer();
@@ -107,16 +121,6 @@ void setup()
   // Setup FastLED
   setupLEDs();
 
-// init motors
- pinMode(MOTOR1_LEFT_PIN, OUTPUT);
- pinMode(MOTOR1_RIGHT_PIN, OUTPUT);
- pinMode(MOTOR2_LEFT_PIN, OUTPUT);
- pinMode(MOTOR2_LEFT_PIN, OUTPUT);
- // for this relay HIGH mean open circuit, LOW mean closed
- digitalWrite(MOTOR2_LEFT_PIN, HIGH);
- digitalWrite(MOTOR2_LEFT_PIN, HIGH);
- digitalWrite(MOTOR2_LEFT_PIN, HIGH);
- digitalWrite(MOTOR2_LEFT_PIN, HIGH);
 }
 
 void loop()
@@ -130,11 +134,11 @@ void loop()
     return;
   }
 
-  // for this relay HIGH mean open circuit, LOW mean closed
-   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
-   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
-   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
-   digitalWrite(MOTOR2_LEFT_PIN, HIGH);
+  // for this relay MOTOR_OFF mean open circuit, MOTOR_ON mean closed
+   digitalWrite(MOTOR1_LEFT_PIN, MOTOR_OFF);
+   digitalWrite(MOTOR1_RIGHT_PIN, MOTOR_OFF);
+   digitalWrite(MOTOR2_LEFT_PIN, MOTOR_OFF);
+   digitalWrite(MOTOR2_RIGHT_PIN, MOTOR_OFF);
    
 #ifdef DEBUG
     Serial.println("loop started");
@@ -161,12 +165,14 @@ void loop()
           Serial.println("newRequestValue="+ newRequestValue);
     #endif 
     }
+    
      
     ///////////////////////////////////
     // if we got new value - parse it
     
-    if (1) //newRequestValue != oldRequestValue)
+    if (newRequestValue != oldRequestValue)
     {  
+      oldRequestValue = newRequestValue;
       // first see if it is start/stop command
       tempValue = GetStartCommand(newRequestValue);
       if (tempValue!=""){
@@ -179,7 +185,7 @@ void loop()
         //////////////////////////////////////////
       // if we got new start/stop value - parse it
       
-      if (1) //newStartCommandValue != oldStartCommandValue)
+      if (1)
       {
         oldStartCommandValue = newStartCommandValue;
          // check command "stop"
@@ -263,30 +269,33 @@ void Step()
     Serial.println(led_steps);
 
 #endif  
+    if(ledNum!= prev_ledNum)
+    {
+      resetLEDs();
     // if new ledNum reach the border - change direction
     if(ledNum <=from_led)
-    {
-      led_direction = 1;
-      ledNum = from_led;
+      {
+        led_direction = 1;
+        ledNum = from_led;
+      }
+      if(ledNum >= to_led)
+      {
+        led_direction = -1;
+        ledNum = to_led;
+      }
+      // for any value of light - on/off - turn off previously highlighted led
+      if(light > 0)
+      {
+        setLED(prev_ledNum, 0, 0, 0);
+        
+  #ifdef DEBUG
+      Serial.print(prev_ledNum);
+      Serial.println("off ");
+  #endif  
+      }
     }
-    if(ledNum >= to_led)
-    {
-      led_direction = -1;
-      ledNum = to_led;
-    }
-    // for any value of light - on/off - turn off previously highlighted led
-    if(light > 0)
-    {
-      setLED(prev_ledNum, 0, 0, 0);
-#ifdef DEBUG
-    Serial.print(prev_ledNum);
-    Serial.println("off ");
-#endif  
-    }
-   
-    //resetLEDs();
     prev_ledNum = ledNum;
-#ifdef DEBUG
+#ifdef DEBUGG
     Serial.println("prev_ledNum=");
     Serial.println(prev_ledNum);
     Serial.println("ledNum=");
@@ -355,14 +364,17 @@ void Step()
     {
       if(motor1>0)
       {
+#ifdef DEBUGG
+        Serial.println("before turn motor1 left on");
+#endif
         // send signal to start left motor1
-        digitalWrite(MOTOR1_LEFT_PIN, LOW);
+        digitalWrite(MOTOR1_LEFT_PIN, MOTOR_ON);
         
       }
       if(motor2>0)
       {
         // send signal to start left motor2
-        digitalWrite(MOTOR2_LEFT_PIN, LOW);
+        digitalWrite(MOTOR2_LEFT_PIN, MOTOR_ON);
       }
       if(sound>0)
       {
@@ -377,12 +389,12 @@ void Step()
       if(motor1>0)
       {
         // send signal to start right motor1
-        digitalWrite(MOTOR1_RIGHT_PIN, LOW);
+        digitalWrite(MOTOR1_RIGHT_PIN, MOTOR_ON);
       }
       if(motor2>0)
       {
         // send signal to start right motor2
-        digitalWrite(MOTOR2_RIGHT_PIN, LOW);
+        digitalWrite(MOTOR2_RIGHT_PIN, MOTOR_ON);
       }
       if(sound>0)
       {
@@ -393,11 +405,14 @@ void Step()
 
     else
     {
+      #ifdef DEBUGG
+        Serial.println("before turn motor1 left off");
+#endif
       // stop motors
-      digitalWrite(MOTOR1_LEFT_PIN, HIGH);
-      digitalWrite(MOTOR1_LEFT_PIN, HIGH);
-      digitalWrite(MOTOR1_RIGHT_PIN, HIGH);
-      digitalWrite(MOTOR2_RIGHT_PIN, HIGH);
+      digitalWrite(MOTOR1_LEFT_PIN, MOTOR_OFF);
+      digitalWrite(MOTOR1_LEFT_PIN, MOTOR_OFF);
+      digitalWrite(MOTOR1_RIGHT_PIN, MOTOR_OFF);
+      digitalWrite(MOTOR2_RIGHT_PIN, MOTOR_OFF);
       // stop sounds
       noTone(LEFT_SOUND_PIN);
       noTone(RIGHT_SOUND_PIN);
@@ -422,7 +437,7 @@ void setupLEDs()
 {
     // Tell FastLED about the LED strip configuration
     //FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, MAX_N_LEDS).setCorrection(TypicalLEDStrip);
-    FastLED.addLeds<WS2812, LED_PIN, COLOR_ORDER>(leds, MAX_N_LEDS);
+    FastLED.addLeds<WS2812, LED_PIN, COLOR_ORDER>(leds, MAX_N_LEDS).setCorrection(TypicalLEDStrip);
     // Set master brightness control
     FastLED.setBrightness(brightness);
     // Turn off all LEDs
@@ -551,10 +566,10 @@ void presetStartCommand(){
 void presetStopCommand()
 {
       // stop all
-      motor1=-1;
-      motor2=-1;
-      light=-1;
-      sound=-1;
+//      motor1=-1;
+//      motor2=-1;
+//      light=-1;
+//      sound=-1;
       resetLEDs();
         // stop sounds
       noTone(LEFT_SOUND_PIN);
@@ -567,10 +582,13 @@ void presetStopCommand()
 void resetMotors()
 {
   // stop motors
-  digitalWrite(MOTOR1_LEFT_PIN, HIGH);
-  digitalWrite(MOTOR1_LEFT_PIN, HIGH);
-  digitalWrite(MOTOR1_RIGHT_PIN, HIGH);
-  digitalWrite(MOTOR2_RIGHT_PIN, HIGH);
+#ifdef DEBUGG
+        Serial.println("before turn motor1 left off");
+#endif  
+  digitalWrite(MOTOR1_LEFT_PIN, MOTOR_OFF);
+  digitalWrite(MOTOR1_LEFT_PIN, MOTOR_OFF);
+  digitalWrite(MOTOR1_RIGHT_PIN, MOTOR_OFF);
+  digitalWrite(MOTOR2_RIGHT_PIN, MOTOR_OFF);
 }
 
 void setupServer(){
