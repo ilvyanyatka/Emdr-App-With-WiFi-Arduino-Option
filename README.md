@@ -1,7 +1,9 @@
 # Emdr-App-With-WiFi-Arduino-Option
 Emdr App With WiFi Arduino Option
 
+EMDR is an effective psychotherapy method mostly used to treat PTSD. 
 This software is completely free, no ads and written for EMDR therapists who cannot afford to pay for EMDR software, but will find it useful in their practice.
+I hope my application will help people, especially from the countries with humanitarian crises.
 
 Software tutorial is here:
 https://www.ilvyanyatka.com/software-tutorial-open-source-emdr-machine/
