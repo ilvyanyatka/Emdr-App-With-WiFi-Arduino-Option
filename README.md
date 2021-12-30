@@ -16,7 +16,7 @@ https://www.ilvyanyatka.com/software-tutorial-open-source-emdr-machine/
 
 There are two options you can use this software: either by itself or with my custom build EMDR machine. You can choose option in the first screen of the software.
 Description of the project's EMDR machine with the breadboard, the list of components etc is here:
-https://www.element14.com/community/community/design-challenges/design-for-a-cause-2021/blog/tags#/?tags=open%20source%20emdr%20machine
+https://community.element14.com/challenges-projects/design-challenges/design-for-a-cause-2021/b/blog/posts/open-source-emdr-machine-0-the-whole-blog
 
 
 You can download Windows UWP version from Microsoft Store here: 
